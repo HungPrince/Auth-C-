@@ -16,10 +16,10 @@ namespace OauthIdentityApp.Providers
             throw new NotImplementedException();
         }
 
-        public async Task CreateAsync (AuthenticationTokenCreateContext context)
+        public async Task CreateAsync(AuthenticationTokenCreateContext context)
         {
             var clientId = context.Ticket.Properties.Dictionary["as:client_id"];
-            if(string.IsNullOrEmpty(clientId))
+            if (string.IsNullOrEmpty(clientId))
             {
                 return;
             }
@@ -32,7 +32,7 @@ namespace OauthIdentityApp.Providers
 
                 var token = new RefreshToken()
                 {
-                    Id = refreshTokenId,
+                    Id = Helper.GetHash(refreshTokenId),
                     ClientId = clientId,
                     Subject = context.Ticket.Identity.Name,
                     IssuedUtc = DateTime.UtcNow,
@@ -44,7 +44,7 @@ namespace OauthIdentityApp.Providers
 
                 token.ProtectedTicket = context.SerializeTicket();
                 var result = await _repo.AddRefreshToken(token);
-                if(result)
+                if (result)
                 {
                     context.SetToken(refreshTokenId);
                 }
@@ -56,9 +56,24 @@ namespace OauthIdentityApp.Providers
             throw new NotImplementedException();
         }
 
-        public Task ReceiveAsync(AuthenticationTokenReceiveContext context)
+        public async Task ReceiveAsync(AuthenticationTokenReceiveContext context)
         {
-            throw new NotImplementedException();
+            var allowOrigin = context.OwinContext.Get<string>("as:clientAllowOrigin");
+            context.OwinContext.Response.Headers.Add("Access-Control-Allow-Origin", new[] { allowOrigin });
+
+            string hashedTokenId = Helper.GetHash(context.Token);
+
+            using (AuthRepository _repo = new AuthRepository())
+            {
+                var refreshToken = await _repo.FindRefreshToken(hashedTokenId);
+                if (refreshToken != null)
+                {
+                    context.DeserializeTicket(refreshToken.ProtectedTicket);
+                    var result = await _repo.RemoveRefreshToken(hashedTokenId);
+                }
+            }
         }
+
+
     }
 }

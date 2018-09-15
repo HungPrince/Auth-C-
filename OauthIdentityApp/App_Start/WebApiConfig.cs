@@ -16,14 +16,21 @@ namespace OauthIdentityApp
             // Web API routes
             config.MapHttpAttributeRoutes();
 
+            GlobalConfiguration.Configuration.Formatters.JsonFormatter.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+
+            config.Formatters.JsonFormatter.SerializerSettings.ContractResolver =
+            new DefaultContractResolver { IgnoreSerializableAttribute = true };
+
+            config.SuppressDefaultHostAuthentication();
+
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
                 routeTemplate: "api/{controller}/{action}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
 
-            var jsonFormatter = config.Formatters.OfType<JsonMediaTypeFormatter>().First();
-            jsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            //var jsonFormatter = config.Formatters.OfType<JsonMediaTypeFormatter>().First();
+            //jsonFormatter.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
         }
     }
 }

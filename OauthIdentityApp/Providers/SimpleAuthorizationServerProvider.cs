@@ -2,14 +2,16 @@
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.OAuth;
 using OauthIdentityApp.Entities;
+using OauthIdentityApp.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
+using static OauthIdentityApp.Models.Models;
 
-namespace OauthIdentityApp.Models
+namespace OauthIdentityApp.Providers
 {
     public class SimpleAuthorizationServerProvider : OAuthAuthorizationServerProvider
     {
@@ -56,6 +58,15 @@ namespace OauthIdentityApp.Models
 
         }
 
+        public override Task TokenEndpoint(OAuthTokenEndpointContext context)
+        {
+            foreach (KeyValuePair<string, string> property in context.Properties.Dictionary)
+            {
+                context.AdditionalResponseParameters.Add(property.Key, property.Value);
+            }
+            return Task.FromResult<object>(null);
+        }
+
         public override Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)
         {
             string clientId = string.Empty;
@@ -84,7 +95,7 @@ namespace OauthIdentityApp.Models
                 return Task.FromResult<object>(null);
             }
 
-            if (client.ApplicationType == Models.ApplicationTyes.NativeConfidential)
+            if (client.ApplicationType == ApplicationTyes.NativeConfidential)
             {
                 if (string.IsNullOrWhiteSpace(clientSecrect))
                 {
@@ -93,7 +104,11 @@ namespace OauthIdentityApp.Models
                 }
                 else
                 {
-
+                    if (client.Secret != Helper.GetHash(clientSecrect))
+                    {
+                        context.SetError("invalid_clientId", "Client secrect is invalid");
+                        return Task.FromResult<object>(null);
+                    }
                 }
             }
 

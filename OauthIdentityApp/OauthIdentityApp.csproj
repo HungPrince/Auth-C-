@@ -94,6 +94,9 @@
     <Reference Include="System.Net.Http.Formatting, Version=5.2.6.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.6\lib\net45\System.Net.Http.Formatting.dll</HintPath>
     </Reference>
+    <Reference Include="System.Security.Claims, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Claims.4.3.0\lib\net46\System.Security.Claims.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.Cors, Version=5.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.Cors.5.0.0\lib\net45\System.Web.Cors.dll</HintPath>
     </Reference>
@@ -135,18 +138,38 @@
   <ItemGroup>
     <Compile Include="App_Start\Startup.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Common\Enums\ActionEnum.cs" />
+    <Compile Include="Common\Enums\RoleNum.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\BaseApiController.cs" />
     <Compile Include="Controllers\OrdersController.cs" />
+    <Compile Include="Controllers\RefreshTokensController.cs" />
     <Compile Include="Entities\Client.cs" />
     <Compile Include="Entities\RefreshToken.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helper.cs" />
+    <Compile Include="Migrations\201809060155322_update_db_to_sqlserver.cs" />
+    <Compile Include="Migrations\201809060155322_update_db_to_sqlserver.Designer.cs">
+      <DependentUpon>201809060155322_update_db_to_sqlserver.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201809060239532_update_table_user.cs" />
+    <Compile Include="Migrations\201809060239532_update_table_user.Designer.cs">
+      <DependentUpon>201809060239532_update_table_user.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\ApplicationUser.cs" />
+    <Compile Include="Models\ApplicationUserManager.cs" />
     <Compile Include="Models\AuthContext.cs" />
     <Compile Include="Models\AuthRepository.cs" />
+    <Compile Include="Models\ModelFactory.cs" />
     <Compile Include="Models\Models.cs" />
-    <Compile Include="Models\SimpleAuthorizationServerProvider.cs" />
+    <Compile Include="Models\System\ApplicationRoleViewModel.cs" />
+    <Compile Include="Models\System\FunctionViewModel.cs" />
+    <Compile Include="Models\System\PermissionViewModel.cs" />
+    <Compile Include="Providers\PermissionAttribute.cs" />
+    <Compile Include="Providers\SimpleAuthorizationServerProvider.cs" />
     <Compile Include="Models\UserModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\SimpleResfreshTokenProvider.cs" />
@@ -162,6 +185,14 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201809060155322_update_db_to_sqlserver.resx">
+      <DependentUpon>201809060155322_update_db_to_sqlserver.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201809060239532_update_table_user.resx">
+      <DependentUpon>201809060239532_update_table_user.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

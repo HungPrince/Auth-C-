@@ -8,11 +8,17 @@ using System.Web;
 
 namespace OauthIdentityApp.Models
 {
-    public class AuthContext : IdentityDbContext<IdentityUser>
+    public class AuthContext : IdentityDbContext<ApplicationUser>
     {
         public AuthContext() : base("AuthContext")
         {
+            Configuration.ProxyCreationEnabled = false;
+            Configuration.LazyLoadingEnabled = false;
+        }
 
+        public static AuthContext Create()
+        {
+            return new AuthContext();
         }
 
         public DbSet<Client> Clients { get; set; }
